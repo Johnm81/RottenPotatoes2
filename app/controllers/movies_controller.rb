@@ -12,7 +12,11 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
+    @all_ratings = ['G','PG','PG-13','R']
+    
+    
     sort = params[:sort] || session[:sort]
+    
     if params[:sort] == "title"
       @title_header = "hilite"
     else
@@ -23,13 +27,29 @@ class MoviesController < ApplicationController
     else
       @release_date_header = ""
     end
+    
     if params[:sort] != session[:sort]
       session[:sort] = sort
       redirect_to :sort => sort and return
     else
       @movies = Movie.all
     end
+    
+    if params[:ratings] != session[:ratings] #new code
+      session[:ratings] = rating
+      redirect_to :ratings => rating and return
+    else
+      @movies = Movie.all
+    end
+    
     @movies = Movie.order(params[:sort])
+    
+    if params[:ratings]
+      @movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort]) #new code added
+    end
+    
+    
+    
     
   end
 
