@@ -35,7 +35,7 @@ class MoviesController < ApplicationController
     if (params[:sort] != session[:sort]) || (params[:ratings] != session[:ratings])
       session[:sort] = sort
       session[:ratings] = ratings
-      redirect_to movies_path(:sort => sort, :ratings => ratings) and return
+      redirect_to :sort => sort, :ratings => ratings and return
       
     else
       
