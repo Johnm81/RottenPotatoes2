@@ -42,13 +42,18 @@ class MoviesController < ApplicationController
       @movies = Movie.all
       
     end
-    if ratings.nil?
-      ratings = {}
-      @all_ratings.each {|i| ratings[i] = 1}
+    
+    @selected_ratings = @all_ratings
+    
+    if params[:ratings].nil?
+      Movie.order(params[:sort])
+    else
+      @selected_ratings = params[:ratings].keys
+      @movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort])
     end
     
     
-    @movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort])
+    
     
     
     
