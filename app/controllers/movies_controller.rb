@@ -12,10 +12,13 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
-    @all_ratings = ['G','PG','PG-13','R']
+    @all_ratings = Movie.pluck(:rating).uniq
+    
+    
     
     
     sort = params[:sort] || session[:sort]
+    ratings = params[:ratings] || session[:ratings]
     
     if params[:sort] == "title"
       @title_header = "hilite"
@@ -28,25 +31,22 @@ class MoviesController < ApplicationController
       @release_date_header = ""
     end
     
-    if params[:sort] != session[:sort]
+    
+    if (params[:sort] != session[:sort]) || (params[:ratings] != session[:ratings])
       session[:sort] = sort
-      redirect_to :sort => sort and return
+      session[:ratings] = ratings
+      redirect_to :sort => sort, :ratings => ratings and return
+      
     else
+      
       @movies = Movie.all
+      
     end
     
-    if params[:ratings] != session[:ratings] #new code
-      session[:ratings] = rating
-      redirect_to :ratings => rating and return
-    else
-      @movies = Movie.all
-    end
     
-    @movies = Movie.order(params[:sort])
     
-    if params[:ratings]
-      @movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort]) #new code added
-    end
+    @movies = Movie.where(:rating => params[:ratings].keys).order(params[:sort])
+    
     
     
     
